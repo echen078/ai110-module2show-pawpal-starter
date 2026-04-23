@@ -32,6 +32,22 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+## Features
+
+| Feature | Description |
+|---|---|
+| **Multi-pet support** | An owner can add any number of pets; the scheduler aggregates all their tasks into one daily plan. |
+| **Priority-based sorting** | Tasks are ranked 1–5 and sorted highest-to-lowest before scheduling, ensuring medications and feeding are always attempted before enrichment or grooming. |
+| **Greedy time filtering** | Tasks are included in priority order until the owner's daily time budget is exhausted. Skipped tasks are surfaced in the UI so nothing is silently lost. |
+| **Pinned start times** | Any task can be anchored to an absolute time (e.g., 8:00 AM medication). The scheduler respects the pin and displays it in the schedule table. |
+| **Conflict detection** | After the plan is built, the scheduler checks all pinned tasks for time-window overlap using an interval intersection test and surfaces warnings — without crashing or dropping tasks. |
+| **Daily recurrence** | Tasks marked `recurrence="daily"` automatically produce a fresh uncompleted copy when completed, so the task reappears on the next run. |
+| **Plain-language explanation** | Every generated plan includes a full summary: what was scheduled, what was skipped and why, and any conflict warnings — presented both as UI components and as a copyable text block. |
+
+## 📸 Demo
+
+<a href="/course_images/ai110/pawpal_screenshot.png" target="_blank"><img src='/course_images/ai110/pawpal_screenshot.png' title='PawPal App' width='' alt='PawPal App' class='center-block' /></a>
+
 ## Smarter Scheduling
 
 The scheduler goes beyond a simple to-do list in three ways:
