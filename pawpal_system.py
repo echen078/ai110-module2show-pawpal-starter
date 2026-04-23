@@ -2,7 +2,7 @@
 PawPal+ logic layer — all backend classes live here.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 
 @dataclass
@@ -12,11 +12,18 @@ class Task:
     duration_minutes: int
     priority: int          # 1 (low) – 5 (high)
     completed: bool = False
-    start_time: int | None = None  # minutes from midnight (e.g. 480 = 8:00 AM); None = floating
+    start_time: int | None = None    # minutes from midnight (e.g. 480 = 8:00 AM); None = floating
+    recurrence: str | None = None    # "daily" | None
 
     def mark_complete(self) -> None:
         """Mark this task as done."""
         self.completed = True
+
+    def next_occurrence(self) -> "Task | None":
+        """Return a fresh uncompleted copy for the next cycle, or None if non-recurring."""
+        if self.recurrence is None:
+            return None
+        return replace(self, completed=False)
 
     def fits_in(self, remaining_minutes: int) -> bool:
         """Return True if this task's duration is within the remaining time budget."""
@@ -44,6 +51,17 @@ class Pet:
     def remove_task(self, name: str) -> None:
         """Remove all tasks whose name matches the given string."""
         self.tasks = [t for t in self.tasks if t.name != name]
+
+    def complete_task(self, name: str) -> "Task | None":
+        """Mark a task done; if recurring, append its next occurrence and return it."""
+        for task in self.tasks:
+            if task.name == name and not task.completed:
+                task.mark_complete()
+                next_task = task.next_occurrence()
+                if next_task is not None:
+                    self.tasks.append(next_task)
+                return next_task
+        return None
 
     def get_tasks(self) -> list[Task]:
         """Return a copy of this pet's task list."""
