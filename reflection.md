@@ -83,13 +83,15 @@ After reviewing the skeleton in `pawpal_system.py` for missing relationships and
 
 **a. Constraints and priorities**
 
-- What constraints does your scheduler consider (for example: time, priority, preferences)?
-- How did you decide which constraints mattered most?
+The scheduler considers two constraints: total daily time available (the owner's budget in minutes) and task priority (1–5 scale). Time is the hard constraint — a task that does not fit is always skipped regardless of priority. Priority is the soft ordering constraint — among tasks that do fit, higher-priority tasks are always attempted first. This ordering was chosen because missing a medication (priority 5) is more harmful than skipping enrichment (priority 2), so the greedy pass naturally protects the most important tasks.
 
 **b. Tradeoffs**
 
-- Describe one tradeoff your scheduler makes.
-- Why is that tradeoff reasonable for this scenario?
+The greedy algorithm is simple and predictable but suboptimal in one key way: it can exclude a short high-value task in favour of a long lower-value one when time runs out. For example, if a 30-minute walk (priority 5) fills the last slot, a 5-minute medication (also priority 5) added later in the task list gets skipped — even though the medication would have fit if the walk were moved. A true knapsack solver would find the globally optimal subset, but that adds O(n·W) complexity and is harder to explain to a non-technical owner. The greedy approach is reasonable here because tasks are pre-sorted by priority before the time filter runs, so the most important items are tried first and the "good enough" result is transparent and fast.
+
+**c. Readability vs. Pythonic style**
+
+During development, an alternative `_sort_by_priority` using `operator.attrgetter("priority")` was considered — it removes the lambda and is slightly more idiomatic. The lambda version (`key=lambda t: t.priority`) was kept because it reads as plain English and does not require importing an extra module. The performance difference is negligible for the task counts this app handles. Choosing readability over idiom was the right call for a learning context.
 
 ---
 

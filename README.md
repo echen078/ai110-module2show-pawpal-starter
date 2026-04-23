@@ -32,6 +32,14 @@ source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+## Smarter Scheduling
+
+The scheduler goes beyond a simple to-do list in three ways:
+
+- **Priority-first ordering** — tasks are sorted highest-to-lowest priority before the time filter runs, so the most important care items (medications, feeding) are always attempted before lower-priority ones (enrichment, grooming).
+- **Greedy time filtering** — tasks are included in order until the owner's daily time budget is exhausted; anything that no longer fits is collected into a "skipped" list and surfaced in the plan explanation.
+- **Conflict detection** — tasks can be pinned to an absolute start time (e.g., `start_time=480` for 8:00 AM). After the plan is built, the scheduler checks all pinned task pairs for time-window overlap using a standard interval intersection test and reports any conflicts as warnings — without crashing or silently dropping tasks.
+
 ### Suggested workflow
 
 1. Read the scenario carefully and identify requirements and edge cases.
